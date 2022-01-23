@@ -9,6 +9,7 @@
 
 #endregion "copyright"
 
+using DaleGhent.NINA.ShutdownPc.Utility;
 using Newtonsoft.Json;
 using NINA.Core.Model;
 using NINA.Core.Utility;
@@ -32,10 +33,23 @@ namespace DaleGhent.NINA.ShutdownPc {
     [JsonObject(MemberSerialization.OptIn)]
     public class ShutdownPcInstruction : SequenceItem {
         private readonly string shutdownExe = @"C:\Windows\System32\shutdown.exe";
+        private int shutdownMode = 0;
 
         [ImportingConstructor]
         public ShutdownPcInstruction() {
         }
+
+        [JsonProperty]
+        public int ShutdownMode {
+            get => shutdownMode;
+            set {
+                shutdownMode = value;
+                RaiseAllPropertiesChanged();
+            }
+        }
+
+        public IList<string> ShutdownModes => ItemLists.ShutdownModes;
+        public string ShutdownModeText => ItemLists.ShutdownModes[shutdownMode];
 
         public override Task Execute(IProgress<ApplicationStatus> progress, CancellationToken ct) {
             RunShutdown();
@@ -44,13 +58,22 @@ namespace DaleGhent.NINA.ShutdownPc {
         }
 
         private void RunShutdown() {
-            List<string> args = new List<string> {
-                "/s",
-                "/t 3",
-                "/f",
-                "/d p:0:0",
-                "/hybrid",
-            };
+            List<string> args = new List<string>();
+
+            switch (ShutdownMode) {
+                case 1:
+                    args.Add("/h");
+                    break;
+
+                default:
+                    args.Add("/s");
+                    args.Add("/t 3");
+                    args.Add("/d p:0:0");
+                    args.Add("/hybrid");
+                    break;
+            }
+
+            args.Add("/f");
 
             var shutdownCmd = new ProcessStartInfo(shutdownExe) {
                 Arguments = string.Join(" ", args.ToArray()),
@@ -73,7 +96,9 @@ namespace DaleGhent.NINA.ShutdownPc {
         }
 
         public override object Clone() {
-            return new ShutdownPcInstruction(this);
+            return new ShutdownPcInstruction(this) {
+                ShutdownMode = ShutdownMode,
+            };
         }
 
         public override string ToString() {
