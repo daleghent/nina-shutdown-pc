@@ -58,7 +58,7 @@ namespace DaleGhent.NINA.ShutdownPc {
         }
 
         private void RunShutdown() {
-            List<string> args = new List<string>();
+            List<string> args = new();
 
             switch (ShutdownMode) {
                 case 1:
@@ -77,6 +77,7 @@ namespace DaleGhent.NINA.ShutdownPc {
 
             var shutdownCmd = new ProcessStartInfo(shutdownExe) {
                 Arguments = string.Join(" ", args.ToArray()),
+                UseShellExecute = true,
             };
 
             Logger.Info($"Shutting down the computer with: {shutdownCmd.FileName} {shutdownCmd.Arguments}");
