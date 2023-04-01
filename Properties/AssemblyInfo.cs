@@ -6,8 +6,8 @@ using System.Runtime.InteropServices;
 
 // [MANDATORY] The assembly versioning
 //Should be incremented for each new release build of a plugin
-[assembly: AssemblyVersion("2.0.0.0")]
-[assembly: AssemblyFileVersion("2.0.0.0")]
+[assembly: AssemblyVersion("2.1.0.0")]
+[assembly: AssemblyFileVersion("2.1.0.0")]
 
 // [MANDATORY] The name of your plugin
 [assembly: AssemblyTitle("Shutdown PC")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyCompany("Dale Ghent")]
 // The product name that this plugin is part of
 [assembly: AssemblyProduct("Shutdown PC")]
-[assembly: AssemblyCopyright("Copyright © 2022 Dale Ghent")]
+[assembly: AssemblyCopyright("Copyright © 2023 Dale Ghent")]
 
 // The minimum Version of N.I.N.A. that this plugin is compatible with
 [assembly: AssemblyMetadata("MinimumApplicationVersion", "3.0.0.1001")]
@@ -38,7 +38,7 @@ using System.Runtime.InteropServices;
 //[assembly: AssemblyMetadata("Homepage", "https://daleghent.com/moon-angle")]
 
 //[Optional] Common tags that quickly describe your plugin
-[assembly: AssemblyMetadata("Tags", "shutdown, turn off, halt")]
+[assembly: AssemblyMetadata("Tags", "shutdown, turn off, halt, sleep, hibernate")]
 
 //[Optional] A link that will show a log of all changes in between your plugin's versions
 [assembly: AssemblyMetadata("ChangelogURL", "https://github.com/daleghent/nina-shutdown-pc/blob/main/CHANGELOG.md")]
@@ -50,7 +50,7 @@ using System.Runtime.InteropServices;
 //[Optional] An additional url to an example example screenshot of your plugin in action
 [assembly: AssemblyMetadata("AltScreenshotURL", "")]
 //[Optional] An in-depth description of your plugin
-[assembly: AssemblyMetadata("LongDescription", @"This plugin provides a single instruction that shuts down the computer.
+[assembly: AssemblyMetadata("LongDescription", @"This plugin provides a single instruction that shuts down the computer or puts it into sleep or hibernation modes.
 
 The **Shutdown PC** instruction appears under the **Utility** category of the instruction list.
 
