@@ -18,10 +18,9 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace DaleGhent.NINA.ShutdownPc {
 
@@ -48,7 +47,7 @@ namespace DaleGhent.NINA.ShutdownPc {
             }
         }
 
-        public IList<string> ShutdownModes => ItemLists.ShutdownModes;
+        public static IList<string> ShutdownModes => ItemLists.ShutdownModes;
         public string ShutdownModeText => ItemLists.ShutdownModes[shutdownMode];
 
         public override Task Execute(IProgress<ApplicationStatus> progress, CancellationToken ct) {
@@ -58,22 +57,30 @@ namespace DaleGhent.NINA.ShutdownPc {
         }
 
         private void RunShutdown() {
-            List<string> args = new();
-
             switch (ShutdownMode) {
-                case 1:
-                    args.Add("/h");
+                case 0: // Shutdown
+                    DoShutdown();
                     break;
 
-                default:
-                    args.Add("/s");
-                    args.Add("/t 3");
-                    args.Add("/d p:0:0");
-                    args.Add("/hybrid");
+                case 1: // Sleep
+                    GoToBed(PowerState.Suspend);
+                    break;
+
+                case 2: // Hibernate
+                    GoToBed(PowerState.Hibernate);
                     break;
             }
+        }
 
-            args.Add("/f");
+        private void DoShutdown() {
+            List<string> args = new() {
+                "/s",
+                "/t 3",
+                "/d p:0:0",
+                $"/c \"Shutdown initiated by {Name}\"",
+                "/hybrid",
+                "/f"
+            };
 
             var shutdownCmd = new ProcessStartInfo(shutdownExe) {
                 Arguments = string.Join(" ", args.ToArray()),
@@ -84,12 +91,20 @@ namespace DaleGhent.NINA.ShutdownPc {
 
             try {
                 var cmd = Process.Start(shutdownCmd);
-                Logger.Info($"{shutdownExe} started with PID {cmd.Id}");
+                Logger.Info($"{shutdownCmd.FileName} started with PID {cmd.Id}");
             } catch (Exception ex) {
-                throw new SequenceEntityFailedException(ex.Message);
+                throw new SequenceEntityFailedException($"Failure shutting down: {ex.Message}");
             }
+        }
 
-            return;
+        private void GoToBed(PowerState powerState) {
+            Logger.Info($"System is going into {powerState}");
+
+            try {
+                Application.SetSuspendState(powerState, true, true);
+            } catch (Exception ex) {
+                throw new SequenceEntityFailedException($"Failure going into {powerState}: {ex.Message}");
+            }
         }
 
         private ShutdownPcInstruction(ShutdownPcInstruction copyMe) : this() {

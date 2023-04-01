@@ -22,6 +22,7 @@ namespace DaleGhent.NINA.ShutdownPc.Utility {
         public static readonly IList<string> ShutdownModes = new List<string> {
             "Shutdown",
             "Sleep",
+            "Hibernate",
         };
     }
 }
